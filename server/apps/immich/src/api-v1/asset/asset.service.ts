@@ -17,7 +17,7 @@ import { Response as Res } from 'express';
 import { promisify } from 'util';
 import { DeleteAssetDto } from './dto/delete-asset.dto';
 import { SearchAssetDto } from './dto/search-asset.dto';
-import fs from 'fs/promises';
+import { access } from 'fs/promises';
 
 const fileInfo = promisify(stat);
 
@@ -134,7 +134,7 @@ export class AssetService {
           'Content-Length': size,
         });
 
-        await fs.access(asset.originalPath, constants.R_OK | constants.W_OK);
+        await access(asset.originalPath, constants.R_OK | constants.W_OK);
         fileReadStream = createReadStream(asset.originalPath);
       } else {
         if (!asset.resizePath) {
@@ -146,7 +146,7 @@ export class AssetService {
           'Content-Length': size,
         });
 
-        await fs.access(asset.resizePath, constants.R_OK | constants.W_OK);
+        await access(asset.resizePath, constants.R_OK | constants.W_OK);
         fileReadStream = createReadStream(asset.resizePath);
       }
 
@@ -168,14 +168,14 @@ export class AssetService {
 
     try {
       if (asset.webpPath && asset.webpPath.length > 0) {
-        await fs.access(asset.webpPath, constants.R_OK | constants.W_OK);
+        await access(asset.webpPath, constants.R_OK | constants.W_OK);
         fileReadStream = createReadStream(asset.webpPath);
       } else {
         if (!asset.resizePath) {
           return new NotFoundException('resizePath not set');
         }
 
-        await fs.access(asset.resizePath, constants.R_OK | constants.W_OK);
+        await access(asset.resizePath, constants.R_OK | constants.W_OK);
         fileReadStream = createReadStream(asset.resizePath);
       }
 
@@ -211,7 +211,7 @@ export class AssetService {
             Logger.error('Error serving IMAGE asset for web', 'ServeFile');
             throw new InternalServerErrorException(`Failed to serve image asset for web`, 'ServeFile');
           }
-          await fs.access(asset.resizePath, constants.R_OK | constants.W_OK);
+          await access(asset.resizePath, constants.R_OK | constants.W_OK);
           fileReadStream = createReadStream(asset.resizePath);
 
           return new StreamableFile(fileReadStream);
@@ -225,7 +225,7 @@ export class AssetService {
             'Content-Type': asset.mimeType,
           });
 
-          await fs.access(asset.originalPath, constants.R_OK | constants.W_OK);
+          await access(asset.originalPath, constants.R_OK | constants.W_OK);
           fileReadStream = createReadStream(asset.originalPath);
         } else {
           if (asset.webpPath && asset.webpPath.length > 0) {
@@ -233,7 +233,7 @@ export class AssetService {
               'Content-Type': 'image/webp',
             });
 
-            await fs.access(asset.webpPath, constants.R_OK | constants.W_OK);
+            await access(asset.webpPath, constants.R_OK | constants.W_OK);
             fileReadStream = createReadStream(asset.webpPath);
           } else {
             res.set({
@@ -244,7 +244,7 @@ export class AssetService {
               throw new Error('resizePath not set');
             }
 
-            await fs.access(asset.resizePath, constants.R_OK | constants.W_OK);
+            await access(asset.resizePath, constants.R_OK | constants.W_OK);
             fileReadStream = createReadStream(asset.resizePath);
           }
         }
@@ -263,7 +263,7 @@ export class AssetService {
         let videoPath = asset.originalPath;
         let mimeType = asset.mimeType;
 
-        await fs.access(videoPath, constants.R_OK | constants.W_OK);
+        await access(videoPath, constants.R_OK | constants.W_OK);
 
         if (query.isWeb && asset.mimeType == 'video/quicktime') {
           videoPath = asset.encodedVideoPath == '' ? asset.originalPath : asset.encodedVideoPath;

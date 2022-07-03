@@ -2,7 +2,7 @@ import { Process, Processor } from '@nestjs/bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AssetEntity } from '@app/database/entities/asset.entity';
-import fs from 'fs';
+import { unlink } from 'fs';
 import { SmartInfoEntity } from '@app/database/entities/smart-info.entity';
 import { Job } from 'bull';
 
@@ -22,7 +22,7 @@ export class BackgroundTaskProcessor {
     const { assets } = job.data;
 
     for (const asset of assets) {
-      fs.unlink(asset.originalPath, (err) => {
+      unlink(asset.originalPath, (err) => {
         if (err) {
           console.log('error deleting ', asset.originalPath);
         }
@@ -30,7 +30,7 @@ export class BackgroundTaskProcessor {
 
       // TODO: what if there is no asset.resizePath. Should fail the Job?
       if (asset.resizePath) {
-        fs.unlink(asset.resizePath, (err) => {
+        unlink(asset.resizePath, (err) => {
           if (err) {
             console.log('error deleting ', asset.originalPath);
           }
