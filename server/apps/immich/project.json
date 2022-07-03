@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "server/apps/immich/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/immich",
+        "main": "server/apps/immich/src/main.ts",
+        "tsConfig": "server/apps/immich/tsconfig.app.json",
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "server/apps/immich/src/environments/environment.ts",
+              "with": "server/apps/immich/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "watch": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["server/dist/apps/immich"],
+      "options": {
+        "outputPath": "server/dist/apps/immich",
+        "main": "server/apps/immich/src/main.ts",
+        "tsConfig": "server/apps/immich/tsconfig.app.json",
+        "assets": [],
+        "watch": true
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "immich:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["server/apps/immich/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/server/apps/immich"],
+      "options": {
+        "jestConfig": "server/apps/immich/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
