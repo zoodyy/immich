@@ -10,7 +10,8 @@
         "outputPath": "dist/immich",
         "main": "server/apps/immich/src/main.ts",
         "tsConfig": "server/apps/immich/tsconfig.app.json",
-        "assets": []
+        "assets": [],
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {
@@ -41,6 +42,16 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "immich:build"
+      }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build immich",
+          "docker build -f server/apps/immich/Dockerfile . -t immich-server-dev:latest"
+        ],
+        "parallel": false
       }
     },
     "lint": {

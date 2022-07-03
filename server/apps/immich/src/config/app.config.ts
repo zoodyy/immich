@@ -1,21 +1,21 @@
 import { ConfigModuleOptions } from '@nestjs/config';
-import { object, string, boolean, any } from 'joi';
+import * as Joi from 'joi';
 
 export const immichAppConfig: ConfigModuleOptions = {
   envFilePath: '.env',
   isGlobal: true,
-  validationSchema: object({
-    NODE_ENV: string().required().valid('development', 'production', 'staging').default('development'),
-    DB_USERNAME: string().required(),
-    DB_PASSWORD: string().required(),
-    DB_DATABASE_NAME: string().required(),
-    JWT_SECRET: string().required(),
-    ENABLE_MAPBOX: boolean().required().valid(true, false),
-    MAPBOX_KEY: any().when('ENABLE_MAPBOX', {
+  validationSchema: Joi.object({
+    NODE_ENV: Joi.string().required().valid('development', 'production', 'staging').default('development'),
+    DB_USERNAME: Joi.string().required(),
+    DB_PASSWORD: Joi.string().required(),
+    DB_DATABASE_NAME: Joi.string().required(),
+    JWT_SECRET: Joi.string().required(),
+    ENABLE_MAPBOX: Joi.boolean().required().valid(true, false),
+    MAPBOX_KEY: Joi.any().when('ENABLE_MAPBOX', {
       is: false,
-      then: string().optional().allow(null, ''),
-      otherwise: string().required(),
+      then: Joi.string().optional().allow(null, ''),
+      otherwise: Joi.string().required(),
     }),
-    VITE_SERVER_ENDPOINT: string().required(),
+    VITE_SERVER_ENDPOINT: Joi.string().required(),
   }),
 };
