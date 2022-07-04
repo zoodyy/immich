@@ -13,6 +13,8 @@
 			};
 		}
 
+		await getAssetsInfo(session.user.accessToken);
+
 		return {
 			status: 200,
 			props: {
@@ -45,7 +47,7 @@
 	import { openWebsocketConnection, closeWebsocketConnection } from '../../lib/stores/websocket';
 
 	export let user: ImmichUser;
-	let selectedAction: AppSideBarSelection;
+	let selectedAction: AppSideBarSelection = AppSideBarSelection.PHOTOS;
 
 	let selectedGroupThumbnail: number | null;
 	let isMouseOverGroup: boolean;
@@ -60,20 +62,6 @@
 	const onButtonClicked = (buttonType: CustomEvent) => {
 		selectedAction = buttonType.detail['actionType'] as AppSideBarSelection;
 	};
-
-	onMount(async () => {
-		selectedAction = AppSideBarSelection.PHOTOS;
-
-		if ($session.user) {
-			await getAssetsInfo($session.user.accessToken);
-
-			openWebsocketConnection($session.user.accessToken);
-		}
-	});
-
-	onDestroy(() => {
-		closeWebsocketConnection();
-	});
 
 	const thumbnailMouseEventHandler = (event: CustomEvent) => {
 		const { selectedGroupIndex }: { selectedGroupIndex: number } = event.detail;
