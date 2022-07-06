@@ -11,6 +11,8 @@ import 'package:immich_mobile/shared/services/device_info.service.dart';
 import 'package:immich_mobile/shared/services/network.service.dart';
 import 'package:immich_mobile/shared/models/device_info.model.dart';
 
+import '../../../api/api.dart';
+
 class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
   AuthenticationNotifier(
       this._deviceInfoService, this._backupService, this._networkService)
@@ -60,6 +62,18 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     } catch (e) {
       return false;
     }
+
+    ApiClient client = ApiClient(basePath: serverEndpoint);
+    DefaultApi api = DefaultApi(client);
+
+    var rsp = await api.authControllerLogin(
+        LoginCredentialDto(email: email, password: password));
+
+    if (rsp != null) {
+      debugPrint(rsp.firstName);
+      debugPrint(rsp.lastName);
+    }
+
 
     // Store device id to local storage
     var deviceInfo = await _deviceInfoService.getDeviceInfo();

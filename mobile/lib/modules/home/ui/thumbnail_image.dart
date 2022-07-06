@@ -138,7 +138,7 @@ class ThumbnailImage extends HookConsumerWidget {
                     ? Icons.cloud_done_outlined
                     : Icons.photo_library_rounded,
                 color: Colors.white,
-                size: 18,
+                size: 0,
               ),
             )
           ],

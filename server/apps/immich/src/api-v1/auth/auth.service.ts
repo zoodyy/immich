@@ -8,6 +8,7 @@ import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import * as bcrypt from 'bcrypt';
 import { mapUser, UserResponseDto } from '../user/response-dto/user-response.dto';
+import { LoginResponseDto } from './dto/login-response-dto';
 
 @Injectable()
 export class AuthService {
@@ -49,7 +50,7 @@ export class AuthService {
     return null;
   }
 
-  public async login(loginCredential: LoginCredentialDto) {
+  public async login(loginCredential: LoginCredentialDto): Promise<LoginResponseDto> {
     const validatedUser = await this.validateUser(loginCredential);
 
     if (!validatedUser) {
@@ -58,16 +59,11 @@ export class AuthService {
 
     const payload = new JwtPayloadDto(validatedUser.id, validatedUser.email);
 
-    return {
-      accessToken: await this.immichJwtService.generateToken(payload),
-      userId: validatedUser.id,
-      userEmail: validatedUser.email,
-      firstName: validatedUser.firstName,
-      lastName: validatedUser.lastName,
-      isAdmin: validatedUser.isAdmin,
-      profileImagePath: validatedUser.profileImagePath,
-      shouldChangePassword: validatedUser.shouldChangePassword,
-    };
+    return new LoginResponseDto(
+      await this.immichJwtService.generateToken(payload), 
+      validatedUser.firstName,
+      validatedUser.lastName
+    );
   }
 
   public async adminSignUp(signUpCredential: SignUpDto): Promise<UserResponseDto> {
