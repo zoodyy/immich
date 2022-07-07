@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	export const prerender = false;
 	import type { Load } from '@sveltejs/kit';
+	import { serverEndpoint } from '$lib/constants';
 
 	export const load: Load = async ({ session, fetch }) => {
 		const res = await fetch(`${serverEndpoint}/user/count`);
@@ -33,7 +34,6 @@
 </script>
 
 <script lang="ts">
-	import { serverEndpoint } from '$lib/constants';
 	import { goto } from '$app/navigation';
 
 	export let isAdminUserExist: boolean;
